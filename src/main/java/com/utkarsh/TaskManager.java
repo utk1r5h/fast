@@ -73,4 +73,29 @@ public class TaskManager {
 
   }
 
+
+ public void addTask(String description){
+  // determine a unique id for a task.
+  // default to 1 if the list is empty 
+  long nextID=1;
+   
+  if(!this.tasks.isEmpty()){
+    long maxID= this.tasks.stream()
+                          .mapToLong(Task::getId)
+                          .max()
+                          .orElse(0);
+    
+      nextID=maxID+1;
+  }
+  
+  // create a new task object 
+
+  Task newTask = new Task(nextID, description, Status.TODO, java.time.LocalDateTime.now());
+
+  // in memory list mein
+  this.tasks.add(newTask);
+
+  //permanent list mein
+  this.saveTasks();
+ }
 }
