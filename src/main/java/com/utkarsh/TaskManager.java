@@ -49,4 +49,28 @@ public class TaskManager {
       
           
         }
-      }
+  private void saveTasks(){
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.registerModule(new JavaTimeModule());
+
+    try{
+      File file= new File(TASKS_FILE_PATH);
+
+      // safety check to find parent file
+      file.getParentFile().mkdirs();
+
+      // write the tasks in a nice format
+       mapper.writerWithDefaultPrettyPrinter().writeValue(file, tasks);
+
+      
+
+      
+    }
+    catch(IOException e){
+      System.err.println("Error: Could not save tasks to file.");
+      e.printStackTrace();
+    }
+
+  }
+
+}
