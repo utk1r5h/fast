@@ -6,7 +6,8 @@ import picocli.CommandLine.Command;
 mixinStandardHelpOptions = true,
 description="A fast CLI Task Manager",
 subcommands={
-    AddCommand.class
+    AddCommand.class,
+    ListCommand.class 
 
     
 })
