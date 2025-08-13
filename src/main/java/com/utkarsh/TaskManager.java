@@ -103,6 +103,18 @@ public class TaskManager {
 public List<Task> getTasks(){
   return this.tasks;
 }
+ public void markTaskAsDone(long id){
+  for(Task task: this.tasks){
+    if(task.getId()==id){
+      task.setStatus(Status.DONE);
+      this.saveTasks();
+      
+      System.out.println("markes task" + id + "as done ");
 
+    }
+  }
+  // if this loop finishes we never found the task
+   System.err.println("Could not finfn the task with the id" + id);
+ }
 
 }

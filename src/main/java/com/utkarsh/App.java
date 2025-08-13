@@ -7,7 +7,8 @@ mixinStandardHelpOptions = true,
 description="A fast CLI Task Manager",
 subcommands={
     AddCommand.class,
-    ListCommand.class 
+    ListCommand.class,
+    DoneCommand.class
 
     
 })

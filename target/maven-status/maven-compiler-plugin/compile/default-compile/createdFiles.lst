@@ -1,6 +1,7 @@
 com/utkarsh/ListCommand.class
 com/utkarsh/TaskManager.class
 com/utkarsh/Task.class
+com/utkarsh/DoneCommand.class
 com/utkarsh/AddCommand.class
 com/utkarsh/Status.class
 com/utkarsh/App.class
