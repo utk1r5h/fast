@@ -8,7 +8,8 @@ description="A fast CLI Task Manager",
 subcommands={
     AddCommand.class,
     ListCommand.class,
-    DoneCommand.class
+    DoneCommand.class,
+    ClearCommand.class
 
     
 })

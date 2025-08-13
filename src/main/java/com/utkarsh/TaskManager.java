@@ -110,6 +110,7 @@ public List<Task> getTasks(){
       this.saveTasks();
       
       System.out.println("markes task" + id + "as done ");
+      return;
 
     }
   }
@@ -117,4 +118,13 @@ public List<Task> getTasks(){
    System.err.println("Could not finfn the task with the id" + id);
  }
 
+
+public void clearDoneTasks(){
+  // remove the task from the list if its done
+
+  this.tasks.removeIf(tasks->tasks.getStatus()==Status.DONE);
+  this.saveTasks();
+
+  System.out.println("cleared all completed tasks");
+}
 }
