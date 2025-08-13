@@ -39,7 +39,13 @@ public class Task {
   public void setCreationDate(LocalDateTime creationDate) {
     this.creationDate = creationDate;
   }
-  
+  public Task(){
+    //jackson need this empty constructor to create the object before 
+    //filling it with data from the json file
+    
+  }
+
+
   public Task(long id, String description, Status status, LocalDateTime creationDate) {
     this.id = id;
     this.description = description;
