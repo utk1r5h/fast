@@ -75,6 +75,7 @@ public class TaskManager {
 
 
  public void addTask(String description){
+
   // determine a unique id for a task.
   // default to 1 if the list is empty 
   long nextID=1;
@@ -98,4 +99,10 @@ public class TaskManager {
   //permanent list mein
   this.saveTasks();
  }
+
+public List<Task> getTasks(){
+  return this.tasks;
+}
+
+
 }
