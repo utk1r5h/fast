@@ -127,4 +127,18 @@ public void clearDoneTasks(){
 
   System.out.println("cleared all completed tasks");
 }
+
+public void editTask(long id, String newdescription){
+  for(Task task: this.tasks){
+    if(task.getId()==id){
+      task.setDescription(newdescription);
+      this.saveTasks();
+      System.out.println("Edited task"+ id);      
+      return;
+
+    }
+  }
+   System.err.println("Error: Could not find task with ID " + id);
+
+}
 }

@@ -9,7 +9,8 @@ subcommands={
     AddCommand.class,
     ListCommand.class,
     DoneCommand.class,
-    ClearCommand.class
+    ClearCommand.class,
+    EditCommand.class
 
     
 })
