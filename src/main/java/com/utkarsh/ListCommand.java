@@ -2,24 +2,42 @@ package com.utkarsh;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciitable.CWC_FixedWidth;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 @Command(name="list", description = "List all Pending Tasks")
 
 public class ListCommand implements Runnable{
+  // this will help in showing 
+    // the tasks that have been completed as well
+    @Option(names={"-a", "--all"}, description="Show all tasks, included the completed one")
+    private boolean showALL = false;
+
 
   @Override
   public void run(){
-    TaskManager manager = new TaskManager();
-    List<Task> tasks= manager.getTasks().stream().filter(task->task.getStatus()==Status.TODO).collect(Collectors.toList());
 
-    if(tasks.isEmpty()){
-       System.out.println("no pending tasks");      
-       return;
+
+    TaskManager manager = new TaskManager();
+
+    List<Task> allTasks= manager.getTasks();
+    List<Task> taskstoShow;
+
+    if(showALL){
+      taskstoShow=allTasks;
+    }else{
+      taskstoShow=allTasks.stream().filter(task->task.getStatus()==Status.TODO).collect(Collectors.toList());
     }
+
+        if (taskstoShow.isEmpty()) {
+            System.out.println("No tasks to show.");
+            return;
+        }
+
 
     AsciiTable at = new AsciiTable();
 
@@ -35,7 +53,7 @@ public class ListCommand implements Runnable{
       
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-      for(Task task: tasks){
+      for(Task task: taskstoShow){
         at.addRow(task.getId(),task.getDescription(), task.getCreationDate().format(formatter));
 
         at.addRule();
