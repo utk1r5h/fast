@@ -1,6 +1,9 @@
+// src/main/java/com/utkarsh/Task.java
+
 package com.utkarsh;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter; // Import this
 
 public class Task {
   private long id;
@@ -53,7 +56,20 @@ public class Task {
     this.creationDate = creationDate;
   }
   
-
-
-  
+  // ==================================================================
+  // PRECISE ADDITION: Add this method
+  // This tells the GUI list (JList) how to display the task object
+  // ==================================================================
+  @Override
+  public String toString() {
+    // Formats the date to be more readable
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    
+    // Example: "[DONE] (ID: 1) Buy milk - Created: 2025-11-17 20:30"
+    return String.format("[%s] (ID: %d) %s - Created: %s", 
+        this.status, 
+        this.id, 
+        this.description, 
+        this.creationDate.format(formatter));
+  }
 }
