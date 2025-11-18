@@ -1,55 +1,73 @@
 package com.utkarsh;
+
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
-public class Task{
+
+public class Task {
     private long id;
     private String description;
     private Status status;
     private LocalDateTime creationDate;
     private Set<String> tags;
     private String priority;
-    public long getId(){
+
+    public long getId() {
         return id;
     }
-    public void setId(long id){
+
+    public void setId(long id) {
         this.id = id;
     }
-    public String getDescription(){
+
+    public String getDescription() {
         return description;
     }
-    public void setDescription(String description){
+
+    public void setDescription(String description) {
         this.description = description;
     }
-    public Status getStatus(){
+
+    public Status getStatus() {
         return status;
     }
-    public void setStatus(Status status){
+
+    public void setStatus(Status status) {
         this.status = status;
     }
-    public LocalDateTime getCreationDate(){
+
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
-    public void setCreationDate(LocalDateTime creationDate){
+
+    public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
-    public Set<String> getTags(){
+
+    public Set<String> getTags() {
         return tags;
     }
-    public void setTags(Set<String> tags){
+
+    public void setTags(Set<String> tags) {
         this.tags = tags;
     }
-    public String getPriority(){
+
+    public String getPriority() {
         return priority;
     }
-    public void setPriority(String priority){
+
+    public void setPriority(String priority) {
         this.priority = priority;
     }
-    public Task(){
+
+    // Empty constructor for Jackson
+    public Task() {
         this.tags = new HashSet<>();
         this.priority = "MEDIUM";
     }
-    public Task(long id, String description, Status status, LocalDateTime creationDate){
+
+    public Task(long id, String description, Status status, LocalDateTime creationDate) {
         this.id = id;
         this.description = description;
         this.status = status;
@@ -57,4 +75,16 @@ public class Task{
         this.tags = new HashSet<>();
         this.priority = "MEDIUM";
     }
+
+    @Override
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        return String.format("[%s] (ID: %d) %s - Created: %s",
+                this.status,
+                this.id,
+                this.description,
+                this.creationDate.format(formatter));
+    }
 }
+

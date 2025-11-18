@@ -1,10 +1,11 @@
+com/utkarsh/AddCommand.class
+com/utkarsh/EditCommand.class
+com/utkarsh/App.class
 com/utkarsh/ClearCommand.class
 com/utkarsh/ListCommand.class
 com/utkarsh/TaskManager.class
 com/utkarsh/Task.class
 com/utkarsh/DoneCommand.class
-com/utkarsh/AddCommand.class
-com/utkarsh/EditCommand.class
+com/utkarsh/TaskMasterGUI.class
 com/utkarsh/Status.class
-com/utkarsh/App.class
 com/utkarsh/TaskManager$1.class
