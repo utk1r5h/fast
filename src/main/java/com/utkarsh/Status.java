@@ -1,7 +1,5 @@
 package com.utkarsh;
-
-public enum Status {
-  TODO,
-  DONE
-  
+public enum Status{
+    TODO,
+    DONE
 }
