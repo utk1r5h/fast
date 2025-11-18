@@ -1,4 +1,5 @@
 package com.utkarsh;
+
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,23 +7,28 @@ import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciitable.CWC_FixedWidth;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-@Command(name="list", description = "List all Pending Tasks")
+
+@Command(name = "list", description = "List all Pending Tasks")
 public class ListCommand implements Runnable{
-    @Option(names={"-a", "--all"}, description="Show all tasks, included the completed one")
+
+    @Option(names = {"-a", "--all"}, description = "Show all tasks, included the completed one")
     private boolean showALL = false;
-    @Option(names={"--tag"}, description="Filter by tag")
+
+    @Option(names = {"--tag"}, description = "Filter by tag")
     private String filterTag;
-    @Option(names={"--sort"}, description="Sort by priority")
+
+    @Option(names = {"--sort"}, description = "Sort by priority")
     private String sortBy;
+
     @Override
     public void run(){
         TaskManager manager = new TaskManager();
-        List<Task> allTasks= manager.getTasks();
+        List<Task> allTasks = manager.getTasks();
         List<Task> taskstoShow;
         if(showALL){
-            taskstoShow=allTasks;
+            taskstoShow = allTasks;
         }else{
-            taskstoShow=allTasks.stream().filter(task->task.getStatus()==Status.TODO).collect(Collectors.toList());
+            taskstoShow = allTasks.stream().filter(task -> task.getStatus() == Status.TODO).collect(Collectors.toList());
         }
         if(filterTag != null && !filterTag.isEmpty()){
             taskstoShow = taskstoShow.stream()
@@ -43,15 +49,16 @@ public class ListCommand implements Runnable{
         AsciiTable at = new AsciiTable();
         at.getRenderer().setCWC(new CWC_FixedWidth().add(4).add(30).add(18));
         at.addRule();
-        at.addRow("ID","DESCRIPTION","CREATED-ON");
+        at.addRow("ID", "DESCRIPTION", "CREATED-ON");
         at.addRule();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        for(Task task: taskstoShow){
-            at.addRow(task.getId(),task.getDescription(), task.getCreationDate().format(formatter));
+        for(Task task : taskstoShow){
+            at.addRow(task.getId(), task.getDescription(), task.getCreationDate().format(formatter));
             at.addRule();
         }
         System.out.println(at.render());
     }
+
     private int getPriorityValue(String priority){
         if(priority == null) return 1;
         return switch(priority.toUpperCase()){

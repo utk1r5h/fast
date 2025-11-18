@@ -1,17 +1,19 @@
-// src/main/java/com/utkarsh/TaskMasterGUI.java
-
 package com.utkarsh;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter; // --- NEW ---
-import java.awt.event.MouseEvent;   // --- NEW ---
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import com.utkarsh.util.StringUtil;
 
-public class TaskMasterGUI {
+public class TaskMasterGUI{
 
-    // Backend: Re-uses your existing TaskManager
     private TaskManager taskManager;
 
     // GUI Components
@@ -23,6 +25,11 @@ public class TaskMasterGUI {
     private JButton doneButton;
     private JButton editButton;
     private JButton clearButton;
+    private JButton deleteButton;
+    private JButton searchButton;
+    private JButton statsButton;
+    private JButton tagsButton;
+    private JButton exportButton;
 
     public TaskMasterGUI() {
         // 1. Initialize the backend
@@ -59,23 +66,48 @@ public class TaskMasterGUI {
         
         doneButton = new JButton("Mark as Done");
         editButton = new JButton("Edit Selected");
+        deleteButton = new JButton("Delete Task");
         clearButton = new JButton("Clear Done Tasks");
+        searchButton = new JButton("Search Tasks");
+        statsButton = new JButton("Show Stats");
+        tagsButton = new JButton("View Tags");
+        exportButton = new JButton("Export to CSV");
 
         // Add padding and set consistent size for buttons
         Dimension buttonSize = new Dimension(150, 30);
         doneButton.setPreferredSize(buttonSize);
         editButton.setPreferredSize(buttonSize);
+        deleteButton.setPreferredSize(buttonSize);
         clearButton.setPreferredSize(buttonSize);
+        searchButton.setPreferredSize(buttonSize);
+        statsButton.setPreferredSize(buttonSize);
+        tagsButton.setPreferredSize(buttonSize);
+        exportButton.setPreferredSize(buttonSize);
         doneButton.setMaximumSize(buttonSize);
         editButton.setMaximumSize(buttonSize);
+        deleteButton.setMaximumSize(buttonSize);
         clearButton.setMaximumSize(buttonSize);
+        searchButton.setMaximumSize(buttonSize);
+        statsButton.setMaximumSize(buttonSize);
+        tagsButton.setMaximumSize(buttonSize);
+        exportButton.setMaximumSize(buttonSize);
 
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         buttonPanel.add(doneButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         buttonPanel.add(editButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         buttonPanel.add(clearButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        buttonPanel.add(searchButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        buttonPanel.add(statsButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        buttonPanel.add(tagsButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        buttonPanel.add(exportButton);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         frame.add(buttonPanel, BorderLayout.EAST);
@@ -141,6 +173,48 @@ public class TaskMasterGUI {
             }
         });
 
+        // Delete Button
+        deleteButton.addActionListener((ActionEvent e) -> {
+            Task selectedTask = taskList.getSelectedValue();
+            if (selectedTask != null) {
+                int confirm = JOptionPane.showConfirmDialog(
+                    frame,
+                    "Are you sure you want to delete this task?\n\"" + selectedTask.getDescription() + "\"",
+                    "Confirm Delete",
+                    JOptionPane.YES_NO_OPTION
+                );
+                if (confirm == JOptionPane.YES_OPTION) {
+                    taskManager.deleteTask(selectedTask.getId());
+                    refreshTaskList();
+                }
+            } else {
+                JOptionPane.showMessageDialog(frame, "Please select a task to delete.");
+            }
+        });
+
+        // Search Button
+        searchButton.addActionListener((ActionEvent e) -> {
+            String keyword = JOptionPane.showInputDialog(frame, "Enter search keyword:", "Search Tasks", JOptionPane.PLAIN_MESSAGE);
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                searchTasks(keyword.trim());
+            }
+        });
+
+        // Stats Button
+        statsButton.addActionListener((ActionEvent e) -> {
+            showStatistics();
+        });
+
+        // Tags Button
+        tagsButton.addActionListener((ActionEvent e) -> {
+            showTags();
+        });
+
+        // Export Button
+        exportButton.addActionListener((ActionEvent e) -> {
+            exportToCSV();
+        });
+
         // 7. Load initial data and show the window
         refreshTaskList();
         frame.setLocationRelativeTo(null); // Center the window
@@ -171,6 +245,119 @@ public class TaskMasterGUI {
         List<Task> tasks = taskManager.getTasks();
         for (Task task : tasks) {
             listModel.addElement(task);
+        }
+    }
+
+    // Helper method for searching tasks
+    private void searchTasks(String keyword) {
+        List<Task> allTasks = taskManager.getTasks();
+        List<Task> matchedTasks = allTasks.stream()
+            .filter(t -> StringUtil.contains(t.getDescription(), keyword))
+            .toList();
+        
+        if (matchedTasks.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, 
+                "No tasks found matching: \"" + keyword + "\"",
+                "Search Results",
+                JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            StringBuilder results = new StringBuilder();
+            results.append("Found ").append(matchedTasks.size()).append(" task(s) matching \"").append(keyword).append("\":\n\n");
+            for (Task task : matchedTasks) {
+                results.append("ID: ").append(task.getId())
+                       .append(" - ").append(task.getDescription())
+                       .append(" [").append(task.getStatus()).append("]\n");
+            }
+            JTextArea textArea = new JTextArea(results.toString());
+            textArea.setEditable(false);
+            textArea.setWrapStyleWord(true);
+            textArea.setLineWrap(true);
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            scrollPane.setPreferredSize(new Dimension(400, 300));
+            JOptionPane.showMessageDialog(frame, scrollPane, "Search Results", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    // Helper method for showing statistics
+    private void showStatistics() {
+        List<Task> tasks = taskManager.getTasks();
+        long total = tasks.size();
+        long done = tasks.stream().filter(t -> t.getStatus() == Status.DONE).count();
+        long todo = total - done;
+        double completion = total > 0 ? (done * 100.0 / total) : 0;
+        
+        StringBuilder stats = new StringBuilder();
+        stats.append("Task Statistics\n");
+        stats.append("═══════════════════\n\n");
+        stats.append("Total Tasks: ").append(total).append("\n");
+        stats.append("Completed: ").append(done).append("\n");
+        stats.append("Pending: ").append(todo).append("\n");
+        stats.append(String.format("Completion Rate: %.1f%%", completion));
+        
+        JOptionPane.showMessageDialog(frame, stats.toString(), "Statistics", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // Helper method for showing all tags
+    private void showTags() {
+        Set<String> allTags = taskManager.getAllTags();
+        if (allTags.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "No tags found in any tasks.", "All Tags", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            StringBuilder tagsList = new StringBuilder();
+            tagsList.append("All Tags (").append(allTags.size()).append(" total):\n\n");
+            for (String tag : allTags) {
+                tagsList.append("• ").append(tag).append("\n");
+            }
+            JTextArea textArea = new JTextArea(tagsList.toString());
+            textArea.setEditable(false);
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            scrollPane.setPreferredSize(new Dimension(300, 250));
+            JOptionPane.showMessageDialog(frame, scrollPane, "All Tags", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    // Helper method for exporting tasks to CSV
+    private void exportToCSV() {
+        List<Task> tasks = taskManager.getTasks();
+        if (tasks.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "No tasks to export.", "Export", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Export Tasks to CSV");
+        fileChooser.setSelectedFile(new File("tasks.csv"));
+        
+        int userSelection = fileChooser.showSaveDialog(frame);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try (FileWriter writer = new FileWriter(fileToSave)) {
+                // Write CSV header
+                writer.write("ID,Description,Status,Priority,Tags,CreatedOn\n");
+                
+                // Write task data
+                for (Task task : tasks) {
+                    String tags = task.getTags() != null ? String.join(";", task.getTags()) : "";
+                    writer.write(String.format("%d,\"%s\",%s,%s,\"%s\",%s\n",
+                        task.getId(),
+                        task.getDescription().replace("\"", "\"\""), // Escape quotes
+                        task.getStatus(),
+                        task.getPriority(),
+                        tags,
+                        task.getCreationDate()
+                    ));
+                }
+                
+                JOptionPane.showMessageDialog(frame, 
+                    "Successfully exported " + tasks.size() + " task(s) to:\n" + fileToSave.getAbsolutePath(),
+                    "Export Successful",
+                    JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(frame, 
+                    "Error exporting tasks: " + ex.getMessage(),
+                    "Export Failed",
+                    JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

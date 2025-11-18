@@ -1,4 +1,5 @@
 package com.utkarsh;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
@@ -9,19 +10,22 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.utkarsh.exception.TaskNotFoundException;
+
 public class TaskManager{
     private List<Task> tasks;
-    private static final String TASKS_FILE_PATH =System.getProperty("user.home")+ "/.taskmaster/tasks.json";
+    private static final String TASKS_FILE_PATH = System.getProperty("user.home") + "/.taskmaster/tasks.json";
+
     public TaskManager(){
         this.loadTasks();
     }
+
     private void loadTasks(){
         File file = new File(TASKS_FILE_PATH);
         if(file.exists()){
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
             try{
-                tasks = mapper.readValue(file,  new TypeReference<List<Task>>() {});
+                tasks = mapper.readValue(file, new TypeReference<List<Task>>() {});
             }catch(IOException e){
                 System.err.println("error: could not load tasks from file");
                 e.printStackTrace();
@@ -31,11 +35,12 @@ public class TaskManager{
             tasks = new ArrayList<>();
         }
     }
+
     public void saveTasks(){
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         try{
-            File file= new File(TASKS_FILE_PATH);
+            File file = new File(TASKS_FILE_PATH);
             file.getParentFile().mkdirs();
             mapper.writerWithDefaultPrettyPrinter().writeValue(file, tasks);
         }catch(IOException e){
@@ -43,25 +48,28 @@ public class TaskManager{
             e.printStackTrace();
         }
     }
+
     public void addTask(String description){
-        long nextID=1;
+        long nextID = 1;
         if(!this.tasks.isEmpty()){
-            long maxID= this.tasks.stream()
+            long maxID = this.tasks.stream()
                 .mapToLong(Task::getId)
                 .max()
                 .orElse(0);
-            nextID=maxID+1;
+            nextID = maxID + 1;
         }
         Task newTask = new Task(nextID, description, Status.TODO, java.time.LocalDateTime.now());
         this.tasks.add(newTask);
         this.saveTasks();
     }
+
     public List<Task> getTasks(){
         return this.tasks;
     }
+
     public void markTaskAsDone(long id){
-        for(Task task: this.tasks){
-            if(task.getId()==id){
+        for(Task task : this.tasks){
+            if(task.getId() == id){
                 task.setStatus(Status.DONE);
                 this.saveTasks();
                 System.out.println("markes task" + id + "as done ");
@@ -70,14 +78,16 @@ public class TaskManager{
         }
         System.err.println("Could not finfn the task with the id" + id);
     }
+
     public void clearDoneTasks(){
-        this.tasks.removeIf(tasks->tasks.getStatus()==Status.DONE);
+        this.tasks.removeIf(tasks -> tasks.getStatus() == Status.DONE);
         this.saveTasks();
         System.out.println("cleared all completed tasks");
     }
+
     public void editTask(long id, String newdescription){
-        for(Task task: this.tasks){
-            if(task.getId()==id){
+        for(Task task : this.tasks){
+            if(task.getId() == id){
                 task.setDescription(newdescription);
                 this.saveTasks();
                 System.out.println("Edited task"+ id);
@@ -86,6 +96,7 @@ public class TaskManager{
         }
         System.err.println("Error: Could not find task with ID " + id);
     }
+
     public Set<String> getAllTags(){
         Set<String> allTags = new TreeSet<>();
         for(Task task : tasks){
@@ -95,10 +106,21 @@ public class TaskManager{
         }
         return allTags;
     }
+
     public Task getTaskById(long id){
         return tasks.stream()
             .filter(t -> t.getId() == id)
             .findFirst()
             .orElseThrow(() -> new TaskNotFoundException(id));
+    }
+
+    public void deleteTask(long id){
+        boolean removed = this.tasks.removeIf(task -> task.getId() == id);
+        if(removed){
+            this.saveTasks();
+            System.out.println("Deleted task " + id);
+        }else{
+            System.err.println("Error: Could not find task with ID " + id);
+        }
     }
 }

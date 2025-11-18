@@ -1,0 +1,12 @@
+#!/bin/bash
+# TaskMaster GUI launcher script
+
+JAR_PATH="$(dirname "$0")/target/fast-1.0-SNAPSHOT.jar"
+
+if [ ! -f "$JAR_PATH" ]; then
+    echo "Error: JAR file not found. Please run 'mvn clean package' first."
+    exit 1
+fi
+
+java -cp "$JAR_PATH" com.utkarsh.TaskMasterGUI
+

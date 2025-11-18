@@ -1,8 +1,11 @@
 package com.utkarsh;
+
 import picocli.CommandLine.Command;
 import java.util.Set;
+
 @Command(name = "tags", description = "Show all unique tags")
 public class TagsCommand implements Runnable{
+
     @Override
     public void run(){
         TaskManager manager = new TaskManager();

@@ -1,10 +1,12 @@
 package com.utkarsh;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-@Command(name= "tm",
+
+@Command(name = "tm",
 mixinStandardHelpOptions = true,
-description="A fast CLI Task Manager",
-subcommands={
+description = "A fast CLI Task Manager",
+subcommands = {
     AddCommand.class,
     ListCommand.class,
     DoneCommand.class,
@@ -20,12 +22,14 @@ subcommands={
     ExportCommand.class
 })
 public class App implements Runnable{
+
     @Override
     public void run(){
         System.out.println("Please specify a command: add, list, etc. Use --help for more info.");
     }
+
     public static void main(String[] args){
-        int exitcode= new CommandLine(new App()).execute(args);
+        int exitcode = new CommandLine(new App()).execute(args);
         System.exit(exitcode);
     }
 }

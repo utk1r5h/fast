@@ -1,51 +1,30 @@
-// src/main/java/com/utkarsh/TaskCellRenderer.java
-
 package com.utkarsh;
 
 import javax.swing.*;
 import java.awt.*;
 
-// This class will control HOW each item in the JList is drawn
-public class TaskCellRenderer extends DefaultListCellRenderer {
+public class TaskCellRenderer extends DefaultListCellRenderer{
 
     @Override
-    public Component getListCellRendererComponent(
-            JList<?> list, 
-            Object value, 
-            int index, 
-            boolean isSelected, 
-            boolean cellHasFocus) {
-
-        // Get the component (a JLabel) that would normally be drawn
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus){
         Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-        if (value instanceof Task) {
+        if(value instanceof Task){
             Task task = (Task) value;
-
-            // Use the task's toString() method as the base text
             String text = task.toString();
-
-            if (task.getStatus() == Status.DONE) {
-                // For DONE tasks: add strikethrough and set color to gray
-                // We can use simple HTML to format the label
+            if(task.getStatus() == Status.DONE){
                 setText("<html><strike>" + text + "</strike></html>");
                 c.setForeground(Color.GRAY);
-            } else {
-                // For TODO tasks: just set the text normally
+            }else{
                 setText(text);
-                c.setForeground(Color.BLACK); // Ensure it's black if re-used
+                c.setForeground(Color.BLACK);
             }
-            
-            // Handle selection color
-            if (isSelected) {
+            if(isSelected){
                 c.setBackground(list.getSelectionBackground());
                 c.setForeground(list.getSelectionForeground());
-            } else {
+            }else{
                  c.setBackground(list.getBackground());
-                 // Foreground color is already set above
             }
         }
-        
         return c;
     }
 }

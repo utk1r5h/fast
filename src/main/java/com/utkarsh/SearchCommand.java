@@ -1,15 +1,20 @@
 package com.utkarsh;
+
 import com.utkarsh.util.StringUtil;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Option;
 import java.util.List;
+
 @Command(name = "search", description = "Search tasks by keyword")
 public class SearchCommand implements Runnable{
+
     @Parameters(index = "0", description = "Search keyword", defaultValue = "")
     private String keyword;
+
     @Option(names = {"--palindrome"}, description = "Find palindrome descriptions")
     private boolean palindrome;
+
     @Override
     public void run(){
         TaskManager manager = new TaskManager();

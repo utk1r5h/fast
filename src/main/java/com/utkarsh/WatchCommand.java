@@ -1,8 +1,11 @@
 package com.utkarsh;
+
 import com.utkarsh.thread.AutoSaveThread;
 import picocli.CommandLine.Command;
+
 @Command(name = "watch", description = "Start background task monitor")
 public class WatchCommand implements Runnable{
+
     @Override
     public void run(){
         TaskManager manager = new TaskManager();
